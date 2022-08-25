@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<con:soapui-project id="84e42d76-f6e2-4d92-aba3-20033bedd8d1" activeEnvironment="Default" name="REST Project 1" resourceRoot="" soapui-version="5.7.0" abortOnError="false" runType="SEQUENTIAL" xmlns:con="http://eviware.com/soapui/config"><con:settings/><con:interface xsi:type="con:RestService" id="0165ea4d-97db-4469-9fde-6ce1c44d8493" wadlVersion="http://wadl.dev.java.net/2009/02" name="https://en.wikipedia.org" type="rest" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart=""/><con:endpoints><con:endpoint>https://en.wikipedia.org</con:endpoint></con:endpoints><con:resource name="Api.php" path="/w/api.php" id="4bfa4ce0-f245-4bd7-aafb-53c69f857cf9"><con:settings/><con:parameters><con:parameter><con:name>action</con:name><con:value/><con:style>QUERY</con:style><con:default/><con:description xsi:nil="true"/></con:parameter><con:parameter><con:name>format</con:name><con:value/><con:style>QUERY</con:style><con:default/><con:description xsi:nil="true"/></con:parameter><con:parameter><con:name>generator</con:name><con:value/><con:style>QUERY</con:style><con:default/><con:description xsi:nil="true"/></con:parameter></con:parameters><con:method name="Api.php 1" id="b23cc884-179b-445d-b131-ee33a7c5baf2" method="GET"><con:settings/><con:parameters/><con:representation type="RESPONSE"><con:mediaType>application/json; charset=utf-8</con:mediaType><con:status>200</con:status><con:params/><con:element xmlns:api="https://en.wikipedia.org/w/api.php">api:Response</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType>text/html; charset=utf-8</con:mediaType><con:status>200</con:status><con:params/><con:element>html</con:element></con:representation><con:request name="Request 1" id="99dc4251-70be-477d-9b57-2aec5561fa2e" mediaType="application/json"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:endpoint>https://en.wikipedia.org</con:endpoint><con:request/><con:originalUri>https://en.wikipedia.org/w/api.php</con:originalUri><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters>
+  <con:entry key="format" value="json"/>
+  <con:entry key="action" value="query"/>
+  <con:entry key="generator" value="random"/>
+</con:parameters><con:parameterOrder><con:entry>action</con:entry><con:entry>format</con:entry><con:entry>generator</con:entry></con:parameterOrder></con:request></con:method></con:resource></con:interface><con:testSuite id="2eef24f4-dfbb-421e-9b97-aa4a3dba5354" name="TestSuite 1"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase id="b551f058-c510-4614-a4c4-5d89139c792e" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="TestCase 1" searchProperties="true"><con:settings/><con:testStep type="restrequest" name="WikiRequest" id="d51ccb94-7cb1-4614-9d45-13c1ee97d9ef"><con:settings/><con:config service="https://en.wikipedia.org" resourcePath="/w/api.php" methodName="Api.php 1" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:restRequest name="WikiRequest" id="99dc4251-70be-477d-9b57-2aec5561fa2e" mediaType="application/json"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:endpoint>https://en.wikipedia.org/w/api.php</con:endpoint><con:request/><con:originalUri>https://en.wikipedia.org/w/api.php</con:originalUri><con:assertion type="Valid HTTP Status Codes" id="04d0ad7d-bd0e-4e4d-ad64-75ec871d1ae3" name="Valid HTTP Status Codes"><con:configuration><codes>200</codes></con:configuration></con:assertion><con:assertion type="JsonPath Count" id="8ff46bec-2b61-4b1f-af00-7b14c225686c" name="JsonPath Count"><con:configuration><path>$</path><content>1</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="JsonPath Existence Match" id="47d1e0c8-4a9b-49ed-a7c2-b1f97d78b1c1" name="JsonPath Existence Match"><con:configuration><path>$.query.pages.*.title</path><content>true</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters>
+  <con:entry key="format" value="json"/>
+  <con:entry key="action" value="query"/>
+  <con:entry key="generator" value="random"/>
+</con:parameters><con:parameterOrder><con:entry>action</con:entry><con:entry>format</con:entry><con:entry>generator</con:entry></con:parameterOrder></con:restRequest></con:config></con:testStep><con:testStep type="groovy" name="Groovy Script" id="d7a97c47-6a3c-41ac-aca8-bc8a5450606d"><con:settings/><con:config><script>// Fetching of Response of WikiRequest
+def Response = testRunner.testCase.getTestStepByName("WikiRequest").getPropertyValue("Response")
+
+// Parsing of the Response
+def ParsedResponse =  new groovy.json.JsonSlurper().parseText(Response)
+
+// Fetching of the article ID and title in String Values
+def ID = ParsedResponse.query.pages.values().pageid[0].toString()
+def title = ParsedResponse.query.pages.values().title[0].toString()
+
+// Setting of properties PageId and PageTitle
+testRunner.testCase.getTestStepByName("Properties").setPropertyValue("PageId",ID)
+testRunner.testCase.getTestStepByName("Properties").setPropertyValue("PageTitle",title)
+
+// Saving the article page Id in an int type object
+def IDNumber = ParsedResponse.query.pages.values().pageid[0].toInteger()
+
+// New Request with the parameter pageids set to the previously fetched Id from the random article
+def newRequest = new URL('https://en.wikipedia.org/w/api.php?action=query&amp;format=json&amp;pageids=' + IDNumber).openConnection()
+newRequest.requestMethod = 'GET'
+assert newRequest.responseCode == 200
+// Parsing of the Response
+def newParsedResponse = new groovy.json.JsonSlurper().parseText(newRequest.getInputStream().getText())
+
+// title of the article is the same as the one in the previously generated random article
+log.info (newParsedResponse.query.pages.values().title[0])
+
+
+</script></con:config></con:testStep><con:testStep type="groovy" name="Random" id="0e2bd439-2347-47c1-8f03-ff3d23bfdcf1"><con:settings/><con:config><script>// Random 7 digit number is generated and logged in console
+random = new Random()
+def number = random.nextInt(9999999)
+log.info(number)
+
+//New Request with the parameter pageids set to the previously defined random number
+def newRequestRandom = new URL('https://en.wikipedia.org/w/api.php?action=query&amp;format=json&amp;pageids=' + number).openConnection()
+newRequestRandom.requestMethod = 'GET'
+
+assert newRequestRandom.responseCode == 200
+
+// Parsing of the Response
+def newParsedRandomResponse = new groovy.json.JsonSlurper().parseText(newRequestRandom.getInputStream().getText())
+
+// Logging of the response for the fetched random article
+log.info (newParsedRandomResponse)</script></con:config></con:testStep><con:testStep type="properties" name="Properties" id="ef903b97-0eb6-4abf-8f72-f98e2c8623a2"><con:settings/><con:config xsi:type="con:PropertiesStep" saveFirst="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:properties><con:property><con:name>PageId</con:name><con:value>48337645</con:value></con:property><con:property><con:name>PageTitle</con:name><con:value>User talk:167.88.229.47</con:value></con:property></con:properties></con:config></con:testStep><con:properties/></con:testCase><con:properties/></con:testSuite><con:properties/><con:wssContainer/><con:oAuth2ProfileContainer/><con:oAuth1ProfileContainer/><con:sensitiveInformation/></con:soapui-project>
